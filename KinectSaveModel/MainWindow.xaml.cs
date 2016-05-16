@@ -22,6 +22,27 @@ namespace KinectSaveModel
         public MainWindow()
         {
             InitializeComponent();
+
+            // Test data benodigd voor het schrijven naar bestand te testen
+            /*Vector3D ShoulderCenter = new Vector3D(10,10,30);
+            Vector3D RightShoulder = new Vector3D(11,11,31);
+            Vector3D LeftShoulder = new Vector3D(12,12,32);
+            Vector3D RightElbow = new Vector3D(13,13,33);
+            Vector3D LeftElbow = new Vector3D(14,14,34);
+            Vector3D RightWrist = new Vector3D(15,15,35);
+            Vector3D LeftWrist = new Vector3D(16,16,36);
+
+            List<Vector3D> vectors = new List<Vector3D>();
+            vectors.Add(ShoulderCenter);
+            vectors.Add(RightShoulder);
+            vectors.Add(LeftShoulder);
+            vectors.Add(RightElbow);
+            vectors.Add(LeftElbow);
+            vectors.Add(RightWrist);
+            vectors.Add(LeftWrist);
+
+            writeToFile(vectors);*/
+
             this.Loaded += new RoutedEventHandler(Window_Loaded);
             this.Unloaded += new RoutedEventHandler(Window_Closed);
             sensor.ColorStream.Enable();
@@ -81,64 +102,34 @@ namespace KinectSaveModel
         private void writeToFile(List<Vector3D> vectorList)
         {
             string line = "";
+            String timeStamp = GetTimestamp(DateTime.Now);
+            line += timeStamp + "@";
             for (int i = 0; i < vectorList.Count; i++)
             {
-                line += vectorList.Cast<String>();
+                line += "["+vectorList[i]+"]";
             }
             string path = @"C:\KinectSavedMovements\FirstMovement.txt";
             if (!File.Exists(path))
             {
-                string createText = "" + Environment.NewLine;
-                File.WriteAllText(path, createText);
+                File.WriteAllText(path, line);
             }
+                else
+            {
+                File.AppendAllText(path, Environment.NewLine + line);
+                
 
-            File.AppendAllText(path, line);
-
-            string readText = File.ReadAllText(path);
+                // Deze moet alleen bij de eerste frame gebruikt worden. Op deze manier overscrhijft hij geen bestaande bestanden
+                /*String date = GetTimestamp(DateTime.Now);
+                date = date.Replace("/","-");
+                date = date.Replace(" ","_");
+                date = date.Replace(":","-");
+                path = @"C:\KinectSavedMovements\FirstMovement_"+ date + ".txt";*/
+            }
         }
 
-        // Deze methode genereert de positie van elke joint (de gewrichten van een persoon)
-        private void SetEllipsePosition(Ellipse ellipse, Joint joint)
+        public static String GetTimestamp(DateTime value)
         {
-            SkeletonPoint vector = new SkeletonPoint();
-            vector.X = ScaleVector(640, joint.Position.X);
-            vector.Y = ScaleVector(480, -joint.Position.Y);
-            vector.Z = joint.Position.Z;
-            Joint updatedJoint = new Joint();
-            updatedJoint = joint;
-            updatedJoint.TrackingState = JointTrackingState.Tracked;
-            updatedJoint.Position = vector;
-
-            Canvas.SetLeft(ellipse, updatedJoint.Position.X);
-            Canvas.SetTop(ellipse, updatedJoint.Position.Y);
-        }
-
-
-        private float ScaleVector(int length, float position)
-        {
-            float value = (((((float)length) / 1f) / 2f) * position) + (length / 2);
-            if (value > length)
-            {
-                return (float)length;
-            }
-            if (value < 0f)
-            {
-                return 0f;
-            }
-            string line = Convert.ToString(value);
-            string path = @"C:\KinectSavedMovements\FirstMovement.txt";
-            if (!File.Exists(path))
-            {
-                string createText = "" + Environment.NewLine;
-                File.WriteAllText(path, createText);
-            }
-
-            File.AppendAllText(path, line);
-
-            string readText = File.ReadAllText(path);
-
-
-            return value;
+            return value.ToString("yyyy:MM:dd HH/mm/ss/ffff");
         }
 
         private void Window_Closed(object sender, EventArgs e)
