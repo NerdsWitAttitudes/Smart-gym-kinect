@@ -7,6 +7,9 @@ using System.Windows.Shapes;
 using Microsoft.Kinect;
 using System.Linq;
 using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using System.Collections.Generic;
 
 namespace KinectSaveModel
 {
@@ -32,7 +35,7 @@ namespace KinectSaveModel
             {
                 if (SkeletonFrame == null)
                 {
-                    
+
                     // Moet nog een foutmelding voor aangemaakt worden
                 }
                 else
@@ -51,27 +54,49 @@ namespace KinectSaveModel
                                             select s).FirstOrDefault();
                 if (currentSkeleton != null)
                 {
-                    Ellipse head = null;
-                    SetEllipsePosition(head, currentSkeleton.Joints[JointType.Head]);
-                    Ellipse leftHand = null;
-                    SetEllipsePosition(leftHand, currentSkeleton.Joints[JointType.HandLeft]);
-                    Ellipse leftElbow = null;
-                    SetEllipsePosition(leftElbow, currentSkeleton.Joints[JointType.ElbowLeft]);
-                    Ellipse leftShoulder = null;
-                    SetEllipsePosition(leftShoulder, currentSkeleton.Joints[JointType.ShoulderLeft]);
-                    Ellipse rightHand = null;
-                    SetEllipsePosition(rightHand, currentSkeleton.Joints[JointType.HandRight]);
-                    Ellipse rightElbow = null;
-                    SetEllipsePosition(rightElbow, currentSkeleton.Joints[JointType.ElbowRight]);
-                    Ellipse rightShoulder = null;
-                    SetEllipsePosition(rightShoulder, currentSkeleton.Joints[JointType.ShoulderRight]);
-                    Ellipse centerShoulders = null;
-                    SetEllipsePosition(centerShoulders, currentSkeleton.Joints[JointType.ShoulderCenter]);
+                    
+                    Vector3D ShoulderCenter = new Vector3D(currentSkeleton.Joints[JointType.ShoulderCenter].Position.X, currentSkeleton.Joints[JointType.ShoulderCenter].Position.Y, currentSkeleton.Joints[JointType.ShoulderCenter].Position.Z);
+                    Vector3D RightShoulder = new Vector3D(currentSkeleton.Joints[JointType.ShoulderRight].Position.X, currentSkeleton.Joints[JointType.ShoulderRight].Position.Y, currentSkeleton.Joints[JointType.ShoulderRight].Position.Z);
+                    Vector3D LeftShoulder = new Vector3D(currentSkeleton.Joints[JointType.ShoulderLeft].Position.X, currentSkeleton.Joints[JointType.ShoulderLeft].Position.Y, currentSkeleton.Joints[JointType.ShoulderLeft].Position.Z);
+                    Vector3D RightElbow = new Vector3D(currentSkeleton.Joints[JointType.ElbowRight].Position.X, currentSkeleton.Joints[JointType.ElbowRight].Position.Y, currentSkeleton.Joints[JointType.ElbowRight].Position.Z);
+                    Vector3D LeftElbow = new Vector3D(currentSkeleton.Joints[JointType.ElbowLeft].Position.X, currentSkeleton.Joints[JointType.ElbowLeft].Position.Y, currentSkeleton.Joints[JointType.ElbowLeft].Position.Z);
+                    Vector3D RightWrist = new Vector3D(currentSkeleton.Joints[JointType.WristRight].Position.X, currentSkeleton.Joints[JointType.WristRight].Position.Y, currentSkeleton.Joints[JointType.WristRight].Position.Z);
+                    Vector3D LeftWrist = new Vector3D(currentSkeleton.Joints[JointType.WristLeft].Position.X, currentSkeleton.Joints[JointType.WristLeft].Position.Y, currentSkeleton.Joints[JointType.WristLeft].Position.Z);
+
+                    List<Vector3D> vectors = new List<Vector3D>();
+                    vectors.Add(ShoulderCenter);
+                    vectors.Add(RightShoulder);
+                    vectors.Add(LeftShoulder);
+                    vectors.Add(RightElbow);
+                    vectors.Add(LeftElbow);
+                    vectors.Add(RightWrist);
+                    vectors.Add(LeftWrist);
+
+                    writeToFile(vectors);
 
                 }
             }
         }
-        
+
+        private void writeToFile(List<Vector3D> vectorList)
+        {
+            string line = "";
+            for (int i = 0; i < vectorList.Count; i++)
+            {
+                line += vectorList.Cast<String>();
+            }
+            string path = @"C:\KinectSavedMovements\FirstMovement.txt";
+            if (!File.Exists(path))
+            {
+                string createText = "" + Environment.NewLine;
+                File.WriteAllText(path, createText);
+            }
+
+            File.AppendAllText(path, line);
+
+            string readText = File.ReadAllText(path);
+        }
+
         // Deze methode genereert de positie van elke joint (de gewrichten van een persoon)
         private void SetEllipsePosition(Ellipse ellipse, Joint joint)
         {
@@ -100,9 +125,8 @@ namespace KinectSaveModel
             {
                 return 0f;
             }
-
             string line = Convert.ToString(value);
-            string path = @"C:\KinectSavedMovements\FirstMovement.txt"; 
+            string path = @"C:\KinectSavedMovements\FirstMovement.txt";
             if (!File.Exists(path))
             {
                 string createText = "" + Environment.NewLine;
@@ -110,7 +134,7 @@ namespace KinectSaveModel
             }
 
             File.AppendAllText(path, line);
-            
+
             string readText = File.ReadAllText(path);
 
 
@@ -127,34 +151,7 @@ namespace KinectSaveModel
         private void Window_Loaded(object sender, EventArgs e)
         {
             sensor.SkeletonFrameReady += skeletonFrameReady;
-            sensor.ColorFrameReady += videoFrameReady;
             sensor.Start();
-        }
-
-
-        void videoFrameReady(object sender, ColorImageFrameReadyEventArgs e)
-        {
-            bool dataReceived = false;
-            using (ColorImageFrame ColorImageFrame = e.OpenColorImageFrame())
-            {
-                if (ColorImageFrame == null)
-                {
-                    // Moet nog foutmelding voor geschreven worden
-                }
-                else
-                {
-                    pixelData = new byte[ColorImageFrame.PixelDataLength];
-                    ColorImageFrame.CopyPixelDataTo(pixelData);
-                    dataReceived = true;
-                }
-            }
-
-            if (dataReceived)
-            {
-                BitmapSource source = BitmapSource.Create(640, 480, 96, 96,
-                        PixelFormats.Bgr32, null, pixelData, 640 * 4);
-                
-            }
         }
     }
 }
