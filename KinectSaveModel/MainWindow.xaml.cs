@@ -16,21 +16,30 @@ namespace KinectSaveModel
 {
     public partial class MainWindow : Window
     {
-        private WriteableBitmap colorBitmap;
+        public static WriteableBitmap colorBitmap;
         private byte[] colorPixels;
-        KinectSensor sensor = KinectSensor.KinectSensors[0];
+        public KinectSensor sensor = KinectSensor.KinectSensors[0];
         byte[] pixelData;
-        SkeletonReady sr = new SkeletonReady();
-        SensorColorFrame scf = new SensorColorFrame();
+        private SkeletonReady sr;
 
         public MainWindow()
         {
             InitializeComponent();
+            sr = new SkeletonReady();
+
+            main = this;
 
             this.Loaded += new RoutedEventHandler(Window_Loaded);
             this.Unloaded += new RoutedEventHandler(Window_Closed);
             sensor.ColorStream.Enable();
             sensor.SkeletonStream.Enable();
+        }
+
+        internal static MainWindow main;
+        internal string Status
+        {
+            get { return statusBarText.Text; }
+            set { Dispatcher.Invoke(new Action(() => { statusBarText.Text = value; })); }
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -46,9 +55,25 @@ namespace KinectSaveModel
             colorPixels = new byte[sensor.ColorStream.FramePixelDataLength];
             colorBitmap = new WriteableBitmap(sensor.ColorStream.FrameWidth, sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
             Image.Source = colorBitmap;
-            sensor.ColorFrameReady += scf.SensorColorFrameReady;
+            sensor.ColorFrameReady += SensorColorFrameReady;
             sensor.SkeletonFrameReady += sr.skeletonFrameReady;
             sensor.Start();
+        }
+
+        private void SensorColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
+        {
+            using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
+            {
+                if (colorFrame != null)
+                {
+                    colorFrame.CopyPixelDataTo(colorPixels);
+                    MainWindow.colorBitmap.WritePixels(
+                        new Int32Rect(0, 0, MainWindow.colorBitmap.PixelWidth, colorBitmap.PixelHeight),
+                        colorPixels,
+                        colorBitmap.PixelWidth * sizeof(int),
+                        0);
+                }
+            }
         }
     }
 }

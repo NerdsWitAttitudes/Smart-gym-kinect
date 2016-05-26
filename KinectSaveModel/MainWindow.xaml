@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KinectSaveModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="480" Width="650" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="MainWindow" Height="600" Width="650" Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e"/>
         <SolidColorBrush x:Key="KinectPurpleBrush" Color="#ff52318f"/>
@@ -24,5 +24,10 @@
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center">
             <Image Name="Image" Width="640" Height="480"/>
         </Viewbox>
+        <StatusBar Grid.Row="2" HorizontalAlignment="Stretch" Name="statusBar" VerticalAlignment="Bottom" Background="White" Foreground="{StaticResource MediumGreyBrush}">
+            <StatusBarItem Padding="0 0 0 10">
+                <TextBlock x:FieldModifier="public" Name="statusBarText" Margin="-1 0 0 0">Some text!</TextBlock>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>
