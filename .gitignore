@@ -80,10 +80,7 @@ ipch/
 *.opensdf
 *.sdf
 *.cachefile
-<<<<<<< HEAD
 *.VC.db
-=======
->>>>>>> origin/develop
 
 # Visual Studio profiler
 *.psess
@@ -142,17 +139,11 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-<<<<<<< HEAD
 
 # TODO: Un-comment the next line if you do not want to checkin 
 # your web deploy settings because they may include unencrypted
 # passwords
 #*.pubxml
-=======
-# TODO: Comment the next line if you want to checkin your web deploy settings 
-# but database connection strings (with potential passwords) will be unencrypted
-*.pubxml
->>>>>>> origin/develop
 *.publishproj
 
 # NuGet Packages
@@ -190,10 +181,7 @@ BundleArtifacts/
 
 # Others
 ClientBin/
-<<<<<<< HEAD
 [Ss]tyle[Cc]op.*
-=======
->>>>>>> origin/develop
 ~$*
 *~
 *.dbmdl
@@ -246,19 +234,11 @@ FakesAssemblies/
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
 
-<<<<<<< HEAD
 # LightSwitch generated files
 GeneratedArtifacts/
 ModelManifest.xml
-
-=======
->>>>>>> origin/develop
 # Paket dependency manager
 .paket/paket.exe
 
 # FAKE - F# Make
-<<<<<<< HEAD
 .fake/
-=======
-.fake/
->>>>>>> origin/develop
