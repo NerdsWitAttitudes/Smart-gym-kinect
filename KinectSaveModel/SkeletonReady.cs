@@ -17,9 +17,11 @@ namespace KinectSaveModel
     {
         private int frameNumber = 0;
         Skeleton[] skeleton;
-        private string path = @"C:\KinectSavedMovements\FirstMovement.txt";
-        private String ssPath = @"C:\KinectSavedMovements\screenshots\FirstMovement";
+        private string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private string ssFullPath;
+        private String movementName = "FirstMovement";
 
+        // The method for getting the skeleton frame
         public void skeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             bool dataReceived = false;
@@ -28,7 +30,6 @@ namespace KinectSaveModel
                 if (SkeletonFrame == null)
                 {
                     Debug.WriteLine("frame == null");
-                    // Moet nog een foutmelding voor aangemaakt worden
                 }
                 else
                 {
@@ -44,6 +45,8 @@ namespace KinectSaveModel
                 Skeleton currentSkeleton = (from s in skeleton
                                             where s.TrackingState == SkeletonTrackingState.Tracked
                                             select s).FirstOrDefault();
+                
+                // When there actually is a person (skeleton frame) in front of the kinect, too prevent null values in the file
                 if (currentSkeleton != null)
                 {
                     List<Vector3D> vectors = new List<Vector3D>();
@@ -55,75 +58,59 @@ namespace KinectSaveModel
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristRight].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristRight].Position.Y), currentSkeleton.Joints[JointType.WristRight].Position.Z));
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristLeft].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristLeft].Position.Y), currentSkeleton.Joints[JointType.WristLeft].Position.Z));
 
+                    if(frameNumber == 0){
+                        setPaths();
+                    }
                     screenshotSave();
                     writeToFile(vectors);
-                    calculate(currentSkeleton.Joints[JointType.ShoulderRight], currentSkeleton.Joints[JointType.ElbowRight], currentSkeleton.Joints[JointType.WristRight]);
                 }
             }
         }
 
+        // To set the paths to save the screenshots & the coordinates
+        // This also creates the directory if it doesn't exists
+        private void setPaths()
+        {
+            path = Path.Combine(path, movementName);
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            ssFullPath = Path.Combine(path, "Screenshots");
+            if (!Directory.Exists(ssFullPath))
+            {
+                Directory.CreateDirectory(ssFullPath);
+            }
+            path = Path.Combine(path, movementName + ".txt");
+        }
+
+        // The method to save screenshots for each frame
         private void screenshotSave()
         {
-            // create a png bitmap encoder which knows how to save a .png file
             BitmapEncoder encoder = new PngBitmapEncoder();
-
-            // create frame from the writable bitmap and add to encoder
             encoder.Frames.Add(BitmapFrame.Create(MainWindow.colorBitmap));
-
             string time = System.DateTime.Now.ToString("hh'-'mm'-'ss", CultureInfo.CurrentUICulture.DateTimeFormat);
-            if (frameNumber == 0)
-            {
-                if (!Directory.Exists(@"C:\KinectSavedMovements\screenshots\FirstMovement"))
-                {
-                    Directory.CreateDirectory(@"C:\KinectSavedMovements\screenshots\FirstMovement");
-                    ssPath = @"C:\KinectSavedMovements\screenshots\FirstMovement";
-                }
-                if (Directory.Exists(@"C:\KinectSavedMovements\screenshots\FirstMovement"))
-                {
-                    Directory.CreateDirectory(@"C:\KinectSavedMovements\screenshots\FirstMovement-"+time);
-                    ssPath = @"C:\KinectSavedMovements\screenshots\FirstMovement-" + time;
-                }
-            }
-
-            string ssFullPath = Path.Combine(ssPath, "frame-" + frameNumber + ".png");
-
-            // write the new file to disk
+            String ssFullPath2 = Path.Combine(ssFullPath, "frame-" + frameNumber + ".png");
+            Debug.WriteLine(ssFullPath2);
             try
             {
-                using (FileStream fs = new FileStream(ssFullPath, FileMode.Create))
+                using (FileStream fs = new FileStream(ssFullPath2, FileMode.Create))
                 {
                     encoder.Save(fs);
                 }
-
-                //this.statusBarText.Text = string.Format(CultureInfo.InvariantCulture, "{0} {1}", Properties.Resources.ScreenshotWriteSuccess, path);
             }
             catch (IOException)
             {
-                //this.statusBarText.Text = string.Format(CultureInfo.InvariantCulture, "{0} {1}", Properties.Resources.ScreenshotWriteFailed, path);
+                MainWindow.main.statusBarText.Text = string.Format(CultureInfo.InvariantCulture, "{0} {1}", Properties.Resources.ScreenshotWriteFailed, path);
             }
         }
 
-        private void calculate(Joint rightShoulder, Joint rightElbow, Joint rightWrist)
-        {
-            float rightShoulderCoordx = coordinatePos(640, rightShoulder.Position.X);
-            float rightElbowCoordx = coordinatePos(640, rightElbow.Position.X);
-            float rightShoulderCoordy = coordinatePos(480, rightShoulder.Position.X);
-            float rightElbowCoordy = coordinatePos(480, rightElbow.Position.X);
-            double lengthX = Math.Pow((rightElbowCoordx - rightShoulderCoordx),2);
-            double lengthY = Math.Pow((rightElbowCoordy-rightShoulderCoordy),2);
-            double lengthUpper = Math.Sqrt((lengthX+lengthY));
-            double asin = Math.Sqrt(lengthX) / lengthUpper;
-            //asin = Math.Acos(asin);
-            //MainWindow.main.statusBarText.Text = ""+lengthY;
-            MainWindow.main.statusBarText.Text = ""+Math.Sqrt(lengthX)+"/"+lengthUpper+"="+asin+" = asin("+(Math.Acos(asin)*(180/Math.PI))+"";
-        }
-
+        // The method to write the coordinates to the text file
         private void writeToFile(List<Vector3D> vectorList)
         {
             string line = "";
             String timeStamp = GetTimestamp(DateTime.Now);
-            String frame = "" + frameNumber;
-            line += frame + ",[" + timeStamp + "]@";
+            line += "" + frameNumber + ",[" + timeStamp + "]@";
             for (int i = 0; i < vectorList.Count; i++)
             {
                 if (i != (vectorList.Count - 1))
@@ -141,19 +128,12 @@ namespace KinectSaveModel
             }
             else
             {
-                if (frameNumber == 0)
-                {
-                    String date = GetTimestamp(DateTime.Now);
-                    date = date.Replace("/", "-");
-                    date = date.Replace(" ", "_");
-                    date = date.Replace(":", "-");
-                    path = @"C:\KinectSavedMovements\FirstMovement_" + date + ".txt";
-                }
                 File.AppendAllText(path, Environment.NewLine + line);
             }
             frameNumber = frameNumber + 1;
         }
 
+        // Get the coordinates on the screen
         private float coordinatePos(int length, float xpos)
         {
             float value = (((((float)length) / 1f) / 2f) * xpos) + (length / 2);
@@ -168,6 +148,7 @@ namespace KinectSaveModel
             return value;
         }
 
+        // Method to get the current date and time
         private String GetTimestamp(DateTime value)
         {
             return value.ToString("yyyy:MM:dd HH/mm/ss/ffff");
