@@ -20,6 +20,7 @@ namespace KinectSaveModel
         private string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         private string ssFullPath;
         private String movementName = "FirstMovement";
+        private Compare compare = new Compare();
 
         // The method for getting the skeleton frame
         public void skeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
@@ -57,12 +58,13 @@ namespace KinectSaveModel
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.ElbowLeft].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.ElbowLeft].Position.Y), currentSkeleton.Joints[JointType.ElbowLeft].Position.Z));
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristRight].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristRight].Position.Y), currentSkeleton.Joints[JointType.WristRight].Position.Z));
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristLeft].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristLeft].Position.Y), currentSkeleton.Joints[JointType.WristLeft].Position.Z));
-
                     if(frameNumber == 0){
                         setPaths();
                     }
-                    screenshotSave();
-                    writeToFile(vectors);
+                    frameNumber = frameNumber + 1;
+                    compare.CompareMovement(vectors);
+                    //screenshotSave();
+                    //writeToFile(vectors);
                 }
             }
         }
@@ -72,6 +74,7 @@ namespace KinectSaveModel
         private void setPaths()
         {
             path = Path.Combine(path, movementName);
+            Debug.WriteLine(path);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);

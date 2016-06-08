@@ -67,6 +67,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="calculatePreviewMovement.cs" />
+    <Compile Include="Compare.cs" />
+    <Compile Include="readFile.cs" />
+    <Compile Include="Row.cs" />
     <Compile Include="SkeletonReady.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

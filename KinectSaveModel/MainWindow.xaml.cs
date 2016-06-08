@@ -20,6 +20,7 @@ namespace KinectSaveModel
         private byte[] colorPixels;
         public KinectSensor sensor = KinectSensor.KinectSensors[0];
         private SkeletonReady sr;
+        private readFile read;
 
         public MainWindow()
         {
@@ -32,6 +33,7 @@ namespace KinectSaveModel
             this.Unloaded += new RoutedEventHandler(Window_Closed);
             sensor.ColorStream.Enable();
             sensor.SkeletonStream.Enable();
+            read = new readFile(@"C:\Users\Dave\Documents\FirstMovement\FirstMovement_1.txt");
         }
 
         // To get and set the statusbar text, this can be used for messages
@@ -40,6 +42,14 @@ namespace KinectSaveModel
         {
             get { return statusBarText.Text; }
             set { Dispatcher.Invoke(new Action(() => { statusBarText.Text = value; })); }
+        }
+        internal List<Double[]> Averages
+        {
+            get { return read.getAverages(); }
+        }
+        internal String[] Joints
+        {
+            get { return read.getJoints(); }
         }
 
         // Method called when the window is closed
