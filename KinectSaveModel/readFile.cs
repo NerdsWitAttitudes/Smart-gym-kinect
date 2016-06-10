@@ -10,7 +10,7 @@ namespace KinectSaveModel
     class readFile
     {
         private List<Row> fileList = new List<Row>();
-        private String[] joints = new String[]{"ShoulderCenter", "ShoulderRight", "ShoulderLeft", "ElbowRight", "ElbowLeft", "WristRight", "WristLeft"};
+        private static String[] joints = new String[]{"ShoulderCenter", "ShoulderRight", "ShoulderLeft", "ElbowRight", "ElbowLeft", "WristRight", "WristLeft"};
         public calculatePreviewMovement averages;
 
         public readFile(String path)
@@ -51,11 +51,13 @@ namespace KinectSaveModel
             averages = new calculatePreviewMovement(fileList, joints);
         }
 
+        // Gets the average movement per joint
         public List<Double[]> getAverages()
         {
             return averages.maxMinJointTotal;
         }
 
+        // Gets all the saved joints
         public String[] getJoints()
         {
             return joints;

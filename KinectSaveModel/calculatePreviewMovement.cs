@@ -10,7 +10,7 @@ namespace KinectSaveModel
     class calculatePreviewMovement
     {
         public List<Double[]> maxMinJointTotal;
-        private String[] joints;
+        private static String[] joints;
         private List<Row> fileList;
 
         public calculatePreviewMovement(List<Row> fileList, String[] jointsList)
