@@ -36,7 +36,7 @@ namespace KinectSaveModel
                 averageWristLeftXY[0] = averageWristLeftXY[0] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].X;
                 averageWristLeftXY[1] = averageWristLeftXY[1] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
             }
-            // Get the average position by deviding the coordinates by the number of items added
+            // Get the average position by dividing the coordinates by the number of items added
             averageWristRightXY[0] = averageWristRightXY[0] / fileList.Count;
             averageWristRightXY[1] = averageWristRightXY[1] / fileList.Count;
             averageWristLeftXY[0] = averageWristLeftXY[0] / fileList.Count;
@@ -168,53 +168,48 @@ namespace KinectSaveModel
 
             // First add all the movement in the x, y or z position to a list
             Double AverageMovementJoint;
-            for (int i = 0; i < maxMinListRepTotal.Count; i++)
+            for (int rep = 0; rep < maxMinListRepTotal.Count; rep++)
             {
-                for (int j = 0; j < maxMinListRepTotal[i].Count; j++)
+                for (int joint = 0; joint < maxMinListRepTotal[rep].Count; joint++)
                 {
                     maxMinJoint = new List<Double>();
-                    for (int k = 0; k < maxMinListRepTotal[i][j].Count; k++)
+                    for (int xyz = 0; xyz < maxMinListRepTotal[rep][joint].Count; xyz++)
                     {
-                        AverageMovementJoint = maxMinListRepTotal[i][j][k][1] - maxMinListRepTotal[i][j][k][0];
-                        //System.Console.WriteLine(AverageMovement);
+                        AverageMovementJoint = maxMinListRepTotal[rep][joint][xyz][1] - maxMinListRepTotal[rep][joint][xyz][0];
                         maxMinJoint.Add(AverageMovementJoint);
                     }
                     maxMinTotalJoints.Add(maxMinJoint);
                 }
             }
 
+            getAverageMovementPerJoint(maxMinTotalJoints);
+        }
+
+        private void getAverageMovementPerJoint(List<List<Double>> maxMinTotalJoints){
             // At the moment if there are 7 reps and 7 joints, there are 7*7=49 items. Now we want only 7 and the average
             // movement per joint in the x, y and z position. These average movement is added to the list 'maxMinJointTotal'
             maxMinJointTotal = new List<Double[]>();
             Double[] xyzJoint = new Double[3];
-            for (int i = 0; i < maxMinTotalJoints.Count; i++)
+            for (int joint = 0; joint < maxMinTotalJoints.Count; joint++)
             {
-                if (maxMinJointTotal.ElementAtOrDefault(i % joints.Length) == null)
+                if (maxMinJointTotal.ElementAtOrDefault(joint % joints.Length) == null)
                 {
                     xyzJoint = new Double[3];
-                    for (int j = 0; j < maxMinTotalJoints[i].Count; j++)
+                    for (int j = 0; j < maxMinTotalJoints[joint].Count; j++)
                     {
-                        xyzJoint[j] = maxMinTotalJoints[i][j];
+                        xyzJoint[j] = maxMinTotalJoints[joint][j];
                     }
                     maxMinJointTotal.Add(xyzJoint);
                 }
-                else if (maxMinJointTotal.ElementAtOrDefault(i % joints.Length) != null)
+                else if (maxMinJointTotal.ElementAtOrDefault(joint % joints.Length) != null)
                 {
                     xyzJoint = new Double[3];
-                    for (int j = 0; j < maxMinTotalJoints[i].Count; j++)
+                    for (int j = 0; j < maxMinTotalJoints[joint].Count; j++)
                     {
-                        xyzJoint[j] = (maxMinJointTotal[i % joints.Length][j] + maxMinTotalJoints[i][j]) / 2;
+                        xyzJoint[j] = (maxMinJointTotal[joint % joints.Length][j] + maxMinTotalJoints[joint][j]) / 2;
                     }
-                    maxMinJointTotal[i % joints.Length] = xyzJoint;
+                    maxMinJointTotal[joint % joints.Length] = xyzJoint;
                 }
-            }
-
-            for (int i = 0; i < maxMinJointTotal.Count; i++)
-            {
-                System.Console.WriteLine("-------------- Joint:" + joints[i] + " ---------------------");
-                System.Console.WriteLine(maxMinJointTotal[i][0]);
-                System.Console.WriteLine(maxMinJointTotal[i][1]);
-                System.Console.WriteLine(maxMinJointTotal[i][2]);
             }
         }
 
@@ -242,34 +237,34 @@ namespace KinectSaveModel
             // if the array with the max and min values is not fully filled
             if (maxMinJoint[0][1] == 0)
             {
-                for (int i = 0; i < maxMinJoint.Count; i++)
+                for (int position = 0; position < maxMinJoint.Count; position++)
                 {
                     // if the min value is bigger than the value to add,
                     // set the max value to the min value, and add in the place of the min value the value to add
-                    if (maxMinJoint[i][0] > xyz[i])
+                    if (maxMinJoint[position][0] > xyz[position])
                     {
-                        maxMinJoint[i][1] = maxMinJoint[i][0];
-                        maxMinJoint[i][0] = xyz[i];
+                        maxMinJoint[position][1] = maxMinJoint[position][0];
+                        maxMinJoint[position][0] = xyz[position];
                     }
                     // add the value to the max
                     else
                     {
-                        maxMinJoint[i][1] = xyz[i];
+                        maxMinJoint[position][1] = xyz[position];
                     }
                 }
             }
             // if the array with the max and min values is fully filled
             else
             {
-                for (int j = 0; j < maxMinJoint.Count; j++)
+                for (int position = 0; position < maxMinJoint.Count; position++)
                 {
-                    if (xyz[j] < maxMinJoint[j][0])
+                    if (xyz[position] < maxMinJoint[position][0])
                     {
-                        maxMinJoint[j][0] = xyz[j];
+                        maxMinJoint[position][0] = xyz[position];
                     }
-                    else if (xyz[j] > maxMinJoint[j][1])
+                    else if (xyz[position] > maxMinJoint[position][1])
                     {
-                        maxMinJoint[j][1] = xyz[j];
+                        maxMinJoint[position][1] = xyz[position];
                     }
                 }
             }

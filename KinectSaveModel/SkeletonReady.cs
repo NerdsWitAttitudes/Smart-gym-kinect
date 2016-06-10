@@ -63,8 +63,7 @@ namespace KinectSaveModel
                     }
                     frameNumber = frameNumber + 1;
                     compare.CompareMovement(vectors);
-                    //screenshotSave();
-                    //writeToFile(vectors);
+                    writeToFile(vectors);
                 }
             }
         }
