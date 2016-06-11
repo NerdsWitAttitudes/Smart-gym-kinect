@@ -78,9 +78,9 @@ namespace KinectSaveModel
                     if (xyz != 2)
                     {
                         // If user moves the joint more than supposed to
-                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz]) + 10) || (AverageMovementJoint[joint][xyz] < (MainWindow.main.Averages[joint][xyz] - 100)))
+                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz]) + 5) || (AverageMovementJoint[joint][xyz] < (MainWindow.main.Averages[joint][xyz] - 100)))
                         {
-                            addToErrorList(joint, xyz);                            
+                            addToErrorList(joint);                            
                         }
                     }
                     // If the position is equal to z.
@@ -88,7 +88,7 @@ namespace KinectSaveModel
                     {
                         if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz])+0.05) || (AverageMovementJoint[joint][xyz] < (MainWindow.main.Averages[joint][xyz] - 100)))
                         {
-                            addToErrorList(joint, xyz);   
+                            addToErrorList(joint);   
                         }
                     }
                 }
@@ -121,7 +121,7 @@ namespace KinectSaveModel
             MainWindow.main.statusBarText.Text = string.Format(text);
         }
 
-        private void addToErrorList(int joint, int xyz)
+        private void addToErrorList(int joint)
         {
             // If the joint is already in the errorlist
             if (errorListJoints.IndexOf(MainWindow.main.Joints[joint]) != -1)

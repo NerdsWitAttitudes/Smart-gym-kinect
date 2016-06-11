@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 
 namespace KinectSaveModel
 {
-    class calculatePreviewMovement
+    public class calculatePreviewMovement
     {
         public List<Double[]> maxMinJointTotal;
         private static String[] joints;
@@ -63,10 +63,10 @@ namespace KinectSaveModel
             Double[] positionZ = { 0, 0 };
 
             // Loop through the list again, now to determine the number of reps and the average of movement of the joints
-            for (int i = 0; i < fileList.Count; i++)
+            for (int row = 0; row < fileList.Count; row++)
             {
                 // Get the y coordinates of the wrists of the frame you are looking into
-                double WristRightY = fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
+                double WristRightY = fileList[row].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
 
                 // Because you don't want to start counting and calculating when the skeleton is visible but only 
                 // when the workout starts, you need to determine when the workout starts
@@ -95,12 +95,12 @@ namespace KinectSaveModel
                             // @Loop through all the joints saved, get the vector list for each joint,
                             // and check if the x, y and z position is bigger or smaller than the current
                             // min and max value in the list
-                            for (int j = 0; j < fileList[i].getVectorList().Count; j++)
+                            for (int joint = 0; joint < fileList[row].getVectorList().Count; joint++)
                             {
-                                Vector3D vector = fileList[i].getVectorList()[j];
-                                maxMinListPerRepPerJoint = maxMinListRep[j];
-                                maxMinListPerRepPerJoint = getAverageMovement(vector, maxMinListPerRepPerJoint);
-                                maxMinListRep[j] = maxMinListPerRepPerJoint;
+                                Vector3D vector = fileList[row].getVectorList()[joint];
+                                maxMinListPerRepPerJoint = maxMinListRep[joint];
+                                maxMinListPerRepPerJoint = getMaxMinJoint(vector, maxMinListPerRepPerJoint);
+                                maxMinListRep[joint] = maxMinListPerRepPerJoint;
                             }
                         }
 
@@ -115,7 +115,7 @@ namespace KinectSaveModel
                             // @Loop through all the joints saved, get the vector list for each joint,
                             // and add these values to the list as min value, later on it checks if the second
                             // x, y or z value is bigger than the current min value, if it is it switches them
-                            for (int j = 0; j < fileList[i].getVectorList().Count; j++)
+                            for (int joint = 0; joint < fileList[row].getVectorList().Count; joint++)
                             {
                                 positionX = new Double[2];
                                 positionY = new Double[2];
@@ -124,8 +124,8 @@ namespace KinectSaveModel
                                 maxMinListPerRepPerJoint.Add(positionX);
                                 maxMinListPerRepPerJoint.Add(positionY);
                                 maxMinListPerRepPerJoint.Add(positionZ);
-                                Vector3D vector = new Vector3D(fileList[i].getVectorList()[j].X, fileList[i].getVectorList()[j].Y, fileList[i].getVectorList()[j].Z);
-                                maxMinListPerRepPerJoint = getAverageMovement(positionX, positionY, positionZ, vector, maxMinListPerRepPerJoint);
+                                Vector3D vector = new Vector3D(fileList[row].getVectorList()[joint].X, fileList[row].getVectorList()[joint].Y, fileList[row].getVectorList()[joint].Z);
+                                maxMinListPerRepPerJoint = getMaxMinJoint(positionX, positionY, positionZ, vector, maxMinListPerRepPerJoint);
                                 maxMinListRep.Add(maxMinListPerRepPerJoint);
                             }
                         }
@@ -138,12 +138,12 @@ namespace KinectSaveModel
                         // @Loop through all the joints saved, get the vector list for each joint,
                         // and check if the x, y and z position is bigger or smaller than the current
                         // min and max value in the list
-                        for (int j = 0; j < fileList[i].getVectorList().Count; j++)
+                        for (int joint = 0; joint < fileList[row].getVectorList().Count; joint++)
                         {
-                            Vector3D vector = fileList[i].getVectorList()[j];
-                            maxMinListPerRepPerJoint = maxMinListRep[j];
-                            maxMinListPerRepPerJoint = getAverageMovement(vector, maxMinListPerRepPerJoint);
-                            maxMinListRep[j] = maxMinListPerRepPerJoint;
+                            Vector3D vector = fileList[row].getVectorList()[joint];
+                            maxMinListPerRepPerJoint = maxMinListRep[joint];
+                            maxMinListPerRepPerJoint = getMaxMinJoint(vector, maxMinListPerRepPerJoint);
+                            maxMinListRep[joint] = maxMinListPerRepPerJoint;
                         }
 
                         // if the right wirst gets close to the average y position
@@ -163,57 +163,37 @@ namespace KinectSaveModel
         // To calculate the average movement in the x, y or z position per joint
         private void calculateMovementPerJoint(List<List<List<Double[]>>> maxMinListRepTotal)
         {
-            List<List<Double>> maxMinTotalJoints = new List<List<Double>>();
-            List<Double> maxMinJoint = new List<Double>();
+            maxMinJointTotal = new List<Double[]>();
 
             // First add all the movement in the x, y or z position to a list
-            Double AverageMovementJoint;
+            Double[] xyzDoubles = new Double[3];
             for (int rep = 0; rep < maxMinListRepTotal.Count; rep++)
             {
                 for (int joint = 0; joint < maxMinListRepTotal[rep].Count; joint++)
                 {
-                    maxMinJoint = new List<Double>();
-                    for (int xyz = 0; xyz < maxMinListRepTotal[rep][joint].Count; xyz++)
+                    if (maxMinJointTotal.ElementAtOrDefault(joint % joints.Length) == null)
                     {
-                        AverageMovementJoint = maxMinListRepTotal[rep][joint][xyz][1] - maxMinListRepTotal[rep][joint][xyz][0];
-                        maxMinJoint.Add(AverageMovementJoint);
+                        xyzDoubles = new Double[3];
+                        for (int xyz = 0; xyz < maxMinListRepTotal[rep][joint].Count; xyz++)
+                        {
+                            xyzDoubles[xyz] = maxMinListRepTotal[rep][joint][xyz][1] - maxMinListRepTotal[rep][joint][xyz][0];
+                        }
+                        maxMinJointTotal.Add(xyzDoubles);
                     }
-                    maxMinTotalJoints.Add(maxMinJoint);
-                }
-            }
-
-            getAverageMovementPerJoint(maxMinTotalJoints);
-        }
-
-        private void getAverageMovementPerJoint(List<List<Double>> maxMinTotalJoints){
-            // At the moment if there are 7 reps and 7 joints, there are 7*7=49 items. Now we want only 7 and the average
-            // movement per joint in the x, y and z position. These average movement is added to the list 'maxMinJointTotal'
-            maxMinJointTotal = new List<Double[]>();
-            Double[] xyzJoint = new Double[3];
-            for (int joint = 0; joint < maxMinTotalJoints.Count; joint++)
-            {
-                if (maxMinJointTotal.ElementAtOrDefault(joint % joints.Length) == null)
-                {
-                    xyzJoint = new Double[3];
-                    for (int j = 0; j < maxMinTotalJoints[joint].Count; j++)
+                    else if (maxMinJointTotal.ElementAtOrDefault(joint % joints.Length) != null)
                     {
-                        xyzJoint[j] = maxMinTotalJoints[joint][j];
+                        xyzDoubles = new Double[3];
+                        for (int xyz = 0; xyz < maxMinListRepTotal[rep][joint].Count; xyz++)
+                        {
+                            xyzDoubles[xyz] = (maxMinJointTotal[joint % joints.Length][xyz] + (maxMinListRepTotal[rep][joint][xyz][1] - maxMinListRepTotal[rep][joint][xyz][0])) / 2;
+                        }
+                        maxMinJointTotal[joint % joints.Length] = xyzDoubles;
                     }
-                    maxMinJointTotal.Add(xyzJoint);
-                }
-                else if (maxMinJointTotal.ElementAtOrDefault(joint % joints.Length) != null)
-                {
-                    xyzJoint = new Double[3];
-                    for (int j = 0; j < maxMinTotalJoints[joint].Count; j++)
-                    {
-                        xyzJoint[j] = (maxMinJointTotal[joint % joints.Length][j] + maxMinTotalJoints[joint][j]) / 2;
-                    }
-                    maxMinJointTotal[joint % joints.Length] = xyzJoint;
                 }
             }
         }
 
-        private List<Double[]> getAverageMovement(Double[] maxMinX, Double[] maxMinY, Double[] maxMinZ, Vector3D coordinates, List<Double[]> maxMinJoint)
+        private List<Double[]> getMaxMinJoint(Double[] maxMinX, Double[] maxMinY, Double[] maxMinZ, Vector3D coordinates, List<Double[]> maxMinJoint)
         {
             Double positionX = coordinates.X;
             Double positionY = coordinates.Y;
@@ -231,7 +211,7 @@ namespace KinectSaveModel
             return maxMinJoint;
         }
 
-        private List<Double[]> getAverageMovement(Vector3D coordinates, List<Double[]> maxMinJoint)
+        public List<Double[]> getMaxMinJoint(Vector3D coordinates, List<Double[]> maxMinJoint)
         {
             Double[] xyz = { coordinates.X, coordinates.Y, coordinates.Z };
             // if the array with the max and min values is not fully filled

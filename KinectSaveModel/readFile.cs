@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 
 namespace KinectSaveModel
 {
-    class readFile
+    public class readFile
     {
         private List<Row> fileList = new List<Row>();
         private static String[] joints = new String[]{"ShoulderCenter", "ShoulderRight", "ShoulderLeft", "ElbowRight", "ElbowLeft", "WristRight", "WristLeft"};

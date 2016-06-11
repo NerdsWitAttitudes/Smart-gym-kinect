@@ -17,10 +17,11 @@ namespace KinectSaveModel
     public partial class MainWindow : Window
     {
         public static WriteableBitmap colorBitmap;
-        private byte[] colorPixels;
+        public byte[] colorPixels;
         public KinectSensor sensor = KinectSensor.KinectSensors[0];
         private SkeletonReady sr;
         private readFile read;
+        public String previewPath = @"C:\Users\Dave\Documents\FirstMovement\FirstMovement_1.txt";
 
         public MainWindow()
         {
@@ -33,7 +34,7 @@ namespace KinectSaveModel
             this.Unloaded += new RoutedEventHandler(Window_Closed);
             sensor.ColorStream.Enable();
             sensor.SkeletonStream.Enable();
-            read = new readFile(@"C:\Users\Dave\Documents\FirstMovement\FirstMovement_1.txt");
+            read = new readFile(previewPath);
         }
 
         // To get and set the statusbar text, this can be used for messages
@@ -50,6 +51,10 @@ namespace KinectSaveModel
         internal String[] Joints
         {
             get { return read.getJoints(); }
+        }
+        internal String getPreviewPath
+        {
+            get { return previewPath; }
         }
 
         // Method called when the window is closed
