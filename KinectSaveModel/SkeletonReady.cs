@@ -17,9 +17,8 @@ namespace KinectSaveModel
     {
         private int frameNumber = 0;
         Skeleton[] skeleton;
-        private string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        private string ssFullPath;
-        private String movementName = "FirstMovement";
+        public string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), previewPath;
+        public String movementName = "FirstMovement", previewName = "FirstMovement-2", folder;
         private Compare compare = new Compare();
 
         // The method for getting the skeleton frame
@@ -58,9 +57,7 @@ namespace KinectSaveModel
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.ElbowLeft].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.ElbowLeft].Position.Y), currentSkeleton.Joints[JointType.ElbowLeft].Position.Z));
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristRight].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristRight].Position.Y), currentSkeleton.Joints[JointType.WristRight].Position.Z));
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristLeft].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristLeft].Position.Y), currentSkeleton.Joints[JointType.WristLeft].Position.Z));
-                    if(frameNumber == 0){
-                        setPaths();
-                    }
+                    
                     frameNumber = frameNumber + 1;
                     compare.CompareMovement(vectors);
                     writeToFile(vectors);
@@ -70,7 +67,7 @@ namespace KinectSaveModel
 
         // To set the paths to save the screenshots & the coordinates
         // This also creates the directory if it doesn't exists
-        private void setPaths()
+        public void setPaths()
         {
             path = Path.Combine(path, movementName);
             Debug.WriteLine(path);
@@ -78,33 +75,9 @@ namespace KinectSaveModel
             {
                 Directory.CreateDirectory(path);
             }
-            ssFullPath = Path.Combine(path, "Screenshots");
-            if (!Directory.Exists(ssFullPath))
-            {
-                Directory.CreateDirectory(ssFullPath);
-            }
+            folder = path;
+            previewPath = Path.Combine(path, previewName + ".txt");
             path = Path.Combine(path, movementName + ".txt");
-        }
-
-        // The method to save screenshots for each frame
-        private void screenshotSave()
-        {
-            BitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(MainWindow.colorBitmap));
-            string time = System.DateTime.Now.ToString("hh'-'mm'-'ss", CultureInfo.CurrentUICulture.DateTimeFormat);
-            String ssFullPath2 = Path.Combine(ssFullPath, "frame-" + frameNumber + ".png");
-            Debug.WriteLine(ssFullPath2);
-            try
-            {
-                using (FileStream fs = new FileStream(ssFullPath2, FileMode.Create))
-                {
-                    encoder.Save(fs);
-                }
-            }
-            catch (IOException)
-            {
-                MainWindow.main.statusBarText.Text = string.Format(CultureInfo.InvariantCulture, "{0} {1}", Properties.Resources.ScreenshotWriteFailed, path);
-            }
         }
 
         // The method to write the coordinates to the text file

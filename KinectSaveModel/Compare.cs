@@ -42,7 +42,7 @@ namespace KinectSaveModel
                 else if (lastMovements.ElementAtOrDefault(i) != null)
                 {
                     // Get the queue, add the x,y and z values to the queue. Check if the queue has more than
-                    // 10 items. If so, delete one item from the queue and save the new list. 
+                    // 25 items. If so, delete one item from the queue and save the new list. 
                     // If not, just add and save the new list
                     movementQueue = lastMovements[i];
                     Double[] xyzJoint = new Double[3];
@@ -78,7 +78,7 @@ namespace KinectSaveModel
                     if (xyz != 2)
                     {
                         // If user moves the joint more than supposed to
-                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz]) + 5) || (AverageMovementJoint[joint][xyz] < (MainWindow.main.Averages[joint][xyz] - 100)))
+                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz]) + 5))
                         {
                             addToErrorList(joint);                            
                         }
@@ -86,7 +86,7 @@ namespace KinectSaveModel
                     // If the position is equal to z.
                     else if (xyz == 2)
                     {
-                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz])+0.05) || (AverageMovementJoint[joint][xyz] < (MainWindow.main.Averages[joint][xyz] - 100)))
+                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz])+0.05))
                         {
                             addToErrorList(joint);   
                         }
@@ -165,19 +165,8 @@ namespace KinectSaveModel
                             minMaxJointCoordinate[1] = lastMovements[i].ElementAt(j)[k];
                             doublesList.Add(minMaxJointCoordinate);
                         }
-                        // If it is the second frame for the joint
-                        else if (j == 1)
-                        {
-                            minMaxJointCoordinate = doublesList2[i][k];
-                            if (lastMovements[i].ElementAt(j)[k] > minMaxJointCoordinate[1])
-                            {
-                                minMaxJointCoordinate[0] = minMaxJointCoordinate[1];
-                                minMaxJointCoordinate[1] = lastMovements[i].ElementAt(j)[k];
-                                doublesList2[i][k] = minMaxJointCoordinate;
-                            }
-                        }
                         // If it is the third or higher frame for the joint
-                        else if (j > 1)
+                        else if (j > 0)
                         {
                             coordinate = lastMovements[i].ElementAt(j)[k];
                             // If the first item in the list is 0, it compares if the max is lower than the min,
