@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace KinectSaveModel
+namespace KinectPersonalTrainer
 {
     class SkeletonReady
     {

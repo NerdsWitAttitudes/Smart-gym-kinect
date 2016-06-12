@@ -12,7 +12,7 @@ using System.Windows.Media.Media3D;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace KinectSaveModel
+namespace KinectPersonalTrainer
 {
     public partial class MainWindow : Window
     {

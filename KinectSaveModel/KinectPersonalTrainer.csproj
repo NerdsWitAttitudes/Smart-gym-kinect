@@ -7,7 +7,7 @@
     <ProjectGuid>{3EAD1F8A-D3B2-420E-A113-6AF1890D07FE}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KinectSaveModel</RootNamespace>
+    <RootNamespace>KinectPersonalTrainer</RootNamespace>
     <AssemblyName>KinectSaveModel</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

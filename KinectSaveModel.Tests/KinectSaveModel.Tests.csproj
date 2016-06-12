@@ -6,7 +6,7 @@
     <ProjectGuid>{A7C61B8F-82BA-40D2-9B25-9613DD5D85E5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KinectSaveModel.Tests</RootNamespace>
+    <RootNamespace>KinectPersonalTrainer.Tests</RootNamespace>
     <AssemblyName>KinectSaveModel.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -58,9 +58,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KinectSaveModel\KinectSaveModel.csproj">
+    <ProjectReference Include="..\KinectSaveModel\KinectPersonalTrainer.csproj">
       <Project>{3ead1f8a-d3b2-420e-a113-6af1890d07fe}</Project>
-      <Name>KinectSaveModel</Name>
+      <Name>KinectPersonalTrainer</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
