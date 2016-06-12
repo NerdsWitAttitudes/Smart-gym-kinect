@@ -7,18 +7,18 @@ using System.Windows.Media.Media3D;
 
 namespace KinectSaveModel
 {
-    public class calculatePreviewMovement
+    public class CalculatePreviewMovement
     {
         public List<Double[]> maxMinJointTotal;
         private static String[] joints;
         private List<Row> fileList;
 
-        public calculatePreviewMovement(List<Row> fileList, String[] jointsList)
+        public CalculatePreviewMovement(List<Row> fileList, String[] jointsList)
         {
             joints = jointsList;
             this.fileList = fileList;
             double average = getMovement();
-            getReps(average, false);
+            getReps(average);
         }
 
         public double getMovement()
@@ -43,29 +43,26 @@ namespace KinectSaveModel
             return averageWristsY;
         }
 
-        public void getReps(double averageWristsY, bool workoutStarted)
+        public void getReps(double averageWristsY)
         {
+            bool workoutStarted = false;
             int repNum = 0;
             bool averageYPos = false;
-
             List<Double[]> maxMinListPerRepPerJoint = new List<Double[]>();
             List<List<Double[]>> maxMinListRep = new List<List<Double[]>>();
             List<List<List<Double[]>>> maxMinListRepTotal = new List<List<List<Double[]>>>();
             Double[] positionX = { 0, 0 };
             Double[] positionY = { 0, 0 };
             Double[] positionZ = { 0, 0 };
-
             // Loop through the list again, now to determine the number of reps and the average of movement of the joints
             for (int row = 0; row < fileList.Count; row++)
             {
                 // Get the y coordinates of the wrists of the frame you are looking into
                 double WristRightY = fileList[row].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
-
                 // Because you don't want to start counting and calculating when the skeleton is visible but only 
                 // when the workout starts, you need to determine when the workout starts
                 if (workoutStarted == false)
                 {
-
                     // If the right wrist between the average y coordinates + 3 and average y coordinates - 10, the workout starts
                     if (WristRightY <= (Math.Round(averageWristsY) + 3) && WristRightY >= (Math.Round(averageWristsY) - 10))
                     {
@@ -73,15 +70,12 @@ namespace KinectSaveModel
                         averageYPos = true;
                     }
                 }
-
                 // Part of code which only fires when the workout has started
                 else if (workoutStarted == true)
                 {
-
                     // If the right wrist is close to the average y position. Soo when the wrist is at start position
                     if (averageYPos == true)
                     {
-
                         // If this isn't the first rep
                         if (repNum != 0)
                         {
@@ -96,7 +90,6 @@ namespace KinectSaveModel
                                 maxMinListRep[joint] = maxMinListPerRepPerJoint;
                             }
                         }
-
                         // When the right wrist goes out of the average y coordinate position, the new rep starts
                         if (WristRightY >= (Math.Round(averageWristsY) + 3))
                         {
@@ -104,7 +97,6 @@ namespace KinectSaveModel
                             repNum = repNum + 1;
                             maxMinListRepTotal.Add(maxMinListRep);
                             maxMinListRep = new List<List<double[]>>();
-
                             // @Loop through all the joints saved, get the vector list for each joint,
                             // and add these values to the list as min value, later on it checks if the second
                             // x, y or z value is bigger than the current min value, if it is it switches them
@@ -123,11 +115,9 @@ namespace KinectSaveModel
                             }
                         }
                     }
-
                     // If the right wrist is outside the average position of the wrist, the rep is busy
                     else if (averageYPos == false)
                     {
-
                         // @Loop through all the joints saved, get the vector list for each joint,
                         // and check if the x, y and z position is bigger or smaller than the current
                         // min and max value in the list
@@ -138,7 +128,6 @@ namespace KinectSaveModel
                             maxMinListPerRepPerJoint = getMaxMinJoint(vector, maxMinListPerRepPerJoint);
                             maxMinListRep[joint] = maxMinListPerRepPerJoint;
                         }
-
                         // if the right wirst gets close to the average y position
                         if (Math.Round(WristRightY) <= (Math.Round(averageWristsY) + 3) && Math.Round(WristRightY) >= (Math.Round(averageWristsY) - 10))
                         {

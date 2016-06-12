@@ -15,8 +15,8 @@ namespace KinectSaveModel.Tests
         public void getCount()
         {
             MainWindow main = new MainWindow();
-            readFile rf = new readFile(main.previewPath);
-            calculatePreviewMovement cm = rf.averages;
+            ReadFile rf = new ReadFile(main.previewPath);
+            CalculatePreviewMovement cm = rf.averages;
             List<Double[]> list = cm.maxMinJointTotal;
             Assert.AreEqual(7,list.Count);
         }
@@ -25,8 +25,8 @@ namespace KinectSaveModel.Tests
         public void getOutput()
         {
             MainWindow main = new MainWindow();
-            readFile rf = new readFile(main.previewPath);
-            calculatePreviewMovement cm = rf.averages;
+            ReadFile rf = new ReadFile(main.previewPath);
+            CalculatePreviewMovement cm = rf.averages;
             Double[] maxMinX = { 350, 550 };
             Double[] maxMinY = { 400, 450 };
             Double[] maxMinZ = { 0.9, 1.35 };
@@ -51,17 +51,13 @@ namespace KinectSaveModel.Tests
         }
 
         [TestMethod]
-        public void checkDifference()
+        public void listLength()
         {
             MainWindow main = new MainWindow();
-            readFile rf = new readFile(main.previewPath);
-            calculatePreviewMovement cm = rf.averages;
-            double average = cm.getMovement();
-            cm.getReps(average, true);
-            List<Double[]> list = cm.maxMinJointTotal;
-            cm.getReps(average, false);
-            List<Double[]> list2 = cm.maxMinJointTotal;
-            Assert.AreEqual(list[3][0], list2[3][0]);
+            ReadFile rf = new ReadFile(main.previewPath);
+            CalculatePreviewMovement cm = rf.averages;
+            int jointMovementListLength = cm.maxMinJointTotal.Count;
+            Assert.AreEqual(7, jointMovementListLength);
         }
         
     }

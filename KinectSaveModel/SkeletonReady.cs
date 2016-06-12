@@ -38,14 +38,11 @@ namespace KinectSaveModel
                     dataReceived = true;
                 }
             }
-
             if (dataReceived)
             {
-
                 Skeleton currentSkeleton = (from s in skeleton
                                             where s.TrackingState == SkeletonTrackingState.Tracked
                                             select s).FirstOrDefault();
-                
                 // When there actually is a person (skeleton frame) in front of the kinect, too prevent null values in the file
                 if (currentSkeleton != null)
                 {
@@ -57,7 +54,6 @@ namespace KinectSaveModel
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.ElbowLeft].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.ElbowLeft].Position.Y), currentSkeleton.Joints[JointType.ElbowLeft].Position.Z));
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristRight].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristRight].Position.Y), currentSkeleton.Joints[JointType.WristRight].Position.Z));
                     vectors.Add(new Vector3D(coordinatePos(640, currentSkeleton.Joints[JointType.WristLeft].Position.X), coordinatePos(480, currentSkeleton.Joints[JointType.WristLeft].Position.Y), currentSkeleton.Joints[JointType.WristLeft].Position.Z));
-                    
                     frameNumber = frameNumber + 1;
                     compare.CompareMovement(vectors);
                     writeToFile(vectors);
@@ -70,7 +66,6 @@ namespace KinectSaveModel
         public void setPaths()
         {
             path = Path.Combine(path, movementName);
-            Debug.WriteLine(path);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
