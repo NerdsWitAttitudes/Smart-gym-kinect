@@ -46,9 +46,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AWS SDK for .NET\bin\Net45\AWSSDK.S3.dll</HintPath>
     </Reference>
-    <Reference Include="Coding4Fun.Kinect.Wpf">
-      <HintPath>..\..\..\..\..\Desktop\kinect\Coding4Fun.Kinect.Wpf.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Microsoft SDKs\Kinect\v1.8\Assemblies\Microsoft.Kinect.dll</HintPath>
@@ -75,10 +72,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AmazonDownloader.cs" />
     <Compile Include="AmazonUploader.cs" />
-    <Compile Include="calculatePreviewMovement.cs" />
+    <Compile Include="CalculateLiveMovement.cs" />
+    <Compile Include="CalculatePreviewMovement.cs" />
     <Compile Include="Compare.cs" />
-    <Compile Include="readFile.cs" />
+    <Compile Include="ReadFile.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="SkeletonReady.cs" />
     <Page Include="MainWindow.xaml">

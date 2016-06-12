@@ -7,17 +7,15 @@ using System.Windows.Media.Media3D;
 
 namespace KinectSaveModel
 {
-    public class readFile
+    public class ReadFile
     {
         private List<Row> fileList = new List<Row>();
         private static String[] joints = new String[]{"ShoulderCenter", "ShoulderRight", "ShoulderLeft", "ElbowRight", "ElbowLeft", "WristRight", "WristLeft"};
-        public calculatePreviewMovement averages;
+        public CalculatePreviewMovement averages;
 
-        public readFile(String path)
+        public ReadFile(String path)
         {
-            int counter = 0;
             string line;
-
             // Get the file and read line by line
             System.IO.StreamReader file = new System.IO.StreamReader(path);
             // While there is a next line, read it
@@ -45,10 +43,9 @@ namespace KinectSaveModel
 
                 // Place the framenumber, datetime and vectorlist in a new Class, add this class to the vectorlist
                 fileList.Add(new Row(frameNumber, dateTime2, vectorlist));
-                counter++;
             }
             file.Close();
-            averages = new calculatePreviewMovement(fileList, joints);
+            averages = new CalculatePreviewMovement(fileList, joints);
         }
 
         // Gets the average movement per joint

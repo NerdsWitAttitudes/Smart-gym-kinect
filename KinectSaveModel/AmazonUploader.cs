@@ -18,33 +18,22 @@ namespace KinectSaveModel
         static string filePath;
         static IAmazonS3 client;
 
-        public void DownloadS3Object(string path)
-        {
-            keyName = "Preview/FirstMovement_2.txt";
-            client = new AmazonS3Client(Amazon.RegionEndpoint.EUCentral1);
-            GetObjectRequest request = new GetObjectRequest();
-            request.BucketName = bucketName;
-            request.Key = keyName;
-            GetObjectResponse response = client.GetObject(request);
-            response.WriteResponseStreamToFile(path);
-        }
-
-        public void sendMyFileToS3(string localFilePath, string bucketName, string fileNameInS3)
+        public void sendToS3(string localFilePath, string fileNameInS3)
         {
             DateTime date = DateTime.Now;
             String dateString = "" + date;
             dateString = dateString.Replace('/', '-');
             dateString = dateString.Replace(' ', '_');
             dateString = dateString.Replace(':', '-');
-            keyName = "users/"+dateString + "/"+fileNameInS3;
+            keyName = "users/"+Environment.MachineName+"/"+dateString + "/"+fileNameInS3;
             filePath = localFilePath;
             using (client = new AmazonS3Client(Amazon.RegionEndpoint.EUCentral1))
             {
-                WritingAnObject();
+                writeFile();
             }
         }
 
-        static void WritingAnObject()
+        static void writeFile()
         {
             try
             {

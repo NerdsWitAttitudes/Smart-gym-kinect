@@ -20,11 +20,11 @@ namespace KinectSaveModel
         public byte[] colorPixels;
         public KinectSensor sensor = KinectSensor.KinectSensors[0];
         private SkeletonReady sr;
-        private readFile read;
+        private ReadFile read;
         public String previewPath;
         private List<Row> fileList = new List<Row>();
         private static String[] joints = new String[]{"ShoulderCenter", "ShoulderRight", "ShoulderLeft", "ElbowRight", "ElbowLeft", "WristRight", "WristLeft"};
-        public calculatePreviewMovement averages;
+        public CalculatePreviewMovement averages;
         private AmazonUploader amazonUploader = new AmazonUploader();
 
         public MainWindow()
@@ -33,15 +33,14 @@ namespace KinectSaveModel
             sr = new SkeletonReady();
             sr.setPaths();
             previewPath = sr.previewPath;
-            amazonUploader.DownloadS3Object(sr.previewPath);
-
+            AmazonDownloader amazonDownloader = new AmazonDownloader();
+            amazonDownloader.DownloadS3Object(sr.previewPath);
             main = this;
-
             this.Loaded += new RoutedEventHandler(Window_Loaded);
             this.Unloaded += new RoutedEventHandler(Window_Closed);
             sensor.ColorStream.Enable();
             sensor.SkeletonStream.Enable();
-            read = new readFile(sr.previewPath);
+            read = new ReadFile(sr.previewPath);
         }
 
         // To get and set the statusbar text, this can be used for messages
@@ -67,11 +66,9 @@ namespace KinectSaveModel
         // Method called when the window is closed
         private void Window_Closed(object sender, EventArgs e)
         {
-            string fileToBackup = sr.path; // test file
-            string myBucketName = "partypeak/smartgym-kinect"; //your s3 bucket name goes here
+            string fileToBackup = sr.path;
             string s3FileName = sr.movementName+".txt";
-
-            amazonUploader.sendMyFileToS3(fileToBackup, myBucketName, s3FileName);
+            amazonUploader.sendToS3(fileToBackup, s3FileName);
             DirectoryInfo directory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
             foreach (FileInfo file in directory.GetFiles())
             {
