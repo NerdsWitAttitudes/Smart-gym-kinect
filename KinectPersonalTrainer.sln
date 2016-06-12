@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectSaveModel", "KinectSaveModel\KinectSaveModel.csproj", "{3EAD1F8A-D3B2-420E-A113-6AF1890D07FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectPersonalTrainer", "KinectSaveModel\KinectPersonalTrainer.csproj", "{3EAD1F8A-D3B2-420E-A113-6AF1890D07FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectSaveModel.Tests", "KinectSaveModel.Tests\KinectSaveModel.Tests.csproj", "{A7C61B8F-82BA-40D2-9B25-9613DD5D85E5}"
 EndProject

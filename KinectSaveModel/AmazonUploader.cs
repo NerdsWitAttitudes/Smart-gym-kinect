@@ -9,7 +9,7 @@ using Amazon.S3.Transfer;
 using Amazon.S3.Model;
 using System.IO;
 
-namespace KinectSaveModel
+namespace KinectPersonalTrainer
 {
     public class AmazonUploader
     {

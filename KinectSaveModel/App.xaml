@@ -1,7 +1,7 @@
-﻿<Application x:Class="KinectSaveModel.App"
+﻿<Application x:Class="KinectPersonalTrainer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:KinectSaveModel"
+             xmlns:local="clr-namespace:KinectPersonalTrainer"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          
