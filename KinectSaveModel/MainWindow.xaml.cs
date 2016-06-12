@@ -17,14 +17,23 @@ namespace KinectSaveModel
     public partial class MainWindow : Window
     {
         public static WriteableBitmap colorBitmap;
-        private byte[] colorPixels;
+        public byte[] colorPixels;
         public KinectSensor sensor = KinectSensor.KinectSensors[0];
         private SkeletonReady sr;
+        private readFile read;
+        public String previewPath;
+        private List<Row> fileList = new List<Row>();
+        private static String[] joints = new String[]{"ShoulderCenter", "ShoulderRight", "ShoulderLeft", "ElbowRight", "ElbowLeft", "WristRight", "WristLeft"};
+        public calculatePreviewMovement averages;
+        private AmazonUploader amazonUploader = new AmazonUploader();
 
         public MainWindow()
         {
             InitializeComponent();
             sr = new SkeletonReady();
+            sr.setPaths();
+            previewPath = sr.previewPath;
+            amazonUploader.DownloadS3Object(sr.previewPath);
 
             main = this;
 
@@ -32,6 +41,7 @@ namespace KinectSaveModel
             this.Unloaded += new RoutedEventHandler(Window_Closed);
             sensor.ColorStream.Enable();
             sensor.SkeletonStream.Enable();
+            read = new readFile(sr.previewPath);
         }
 
         // To get and set the statusbar text, this can be used for messages
@@ -41,10 +51,40 @@ namespace KinectSaveModel
             get { return statusBarText.Text; }
             set { Dispatcher.Invoke(new Action(() => { statusBarText.Text = value; })); }
         }
+        internal List<Double[]> Averages
+        {
+            get { return read.getAverages(); }
+        }
+        internal String[] Joints
+        {
+            get { return read.getJoints(); }
+        }
+        internal String getPreviewPath
+        {
+            get { return sr.previewPath; }
+        }
 
         // Method called when the window is closed
         private void Window_Closed(object sender, EventArgs e)
         {
+            string fileToBackup = sr.path; // test file
+            string myBucketName = "partypeak/smartgym-kinect"; //your s3 bucket name goes here
+            string s3FileName = sr.movementName+".txt";
+
+            amazonUploader.sendMyFileToS3(fileToBackup, myBucketName, s3FileName);
+            DirectoryInfo directory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            foreach (FileInfo file in directory.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in directory.GetDirectories())
+            {
+                if (dir.Name == sr.movementName)
+                {
+                    dir.Delete(true);
+                }
+            }
+
             sensor.Stop();
         }
 

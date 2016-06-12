@@ -39,6 +39,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.1.7.0\lib\net45\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3, Version=3.1.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AWS SDK for .NET\bin\Net45\AWSSDK.S3.dll</HintPath>
+    </Reference>
     <Reference Include="Coding4Fun.Kinect.Wpf">
       <HintPath>..\..\..\..\..\Desktop\kinect\Coding4Fun.Kinect.Wpf.dll</HintPath>
     </Reference>
@@ -46,6 +53,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Microsoft SDKs\Kinect\v1.8\Assemblies\Microsoft.Kinect.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -67,6 +75,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AmazonUploader.cs" />
+    <Compile Include="calculatePreviewMovement.cs" />
+    <Compile Include="Compare.cs" />
+    <Compile Include="readFile.cs" />
+    <Compile Include="Row.cs" />
     <Compile Include="SkeletonReady.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -99,6 +112,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
