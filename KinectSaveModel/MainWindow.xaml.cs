@@ -21,8 +21,7 @@ namespace KinectSaveModel
         public KinectSensor sensor = KinectSensor.KinectSensors[0];
         private SkeletonReady sr;
         private readFile read;
-
-
+        public String previewPath;
         private List<Row> fileList = new List<Row>();
         private static String[] joints = new String[]{"ShoulderCenter", "ShoulderRight", "ShoulderLeft", "ElbowRight", "ElbowLeft", "WristRight", "WristLeft"};
         public calculatePreviewMovement averages;
@@ -33,6 +32,7 @@ namespace KinectSaveModel
             InitializeComponent();
             sr = new SkeletonReady();
             sr.setPaths();
+            previewPath = sr.previewPath;
             amazonUploader.DownloadS3Object(sr.previewPath);
 
             main = this;

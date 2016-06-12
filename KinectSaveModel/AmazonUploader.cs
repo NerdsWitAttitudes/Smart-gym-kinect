@@ -15,7 +15,7 @@ namespace KinectSaveModel
     {
         static string bucketName = "smartgym-kinect";
         static string keyName;
-        static string filePath = "";
+        static string filePath;
         static IAmazonS3 client;
 
         public void DownloadS3Object(string path)
@@ -48,15 +48,6 @@ namespace KinectSaveModel
         {
             try
             {
-                PutObjectRequest putRequest1 = new PutObjectRequest
-                {
-                    BucketName = bucketName,
-                    Key = keyName,
-                    ContentBody = "sample text"
-                };
-
-                PutObjectResponse response1 = client.PutObject(putRequest1);
-
                 PutObjectRequest putRequest2 = new PutObjectRequest
                 {
                     BucketName = bucketName,

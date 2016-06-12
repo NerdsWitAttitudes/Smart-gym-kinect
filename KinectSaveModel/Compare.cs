@@ -78,7 +78,7 @@ namespace KinectSaveModel
                     if (xyz != 2)
                     {
                         // If user moves the joint more than supposed to
-                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz]) + 5))
+                        if ((AverageMovementJoint[joint][xyz] > (MainWindow.main.Averages[joint][xyz]) + 10))
                         {
                             addToErrorList(joint);                            
                         }

@@ -56,9 +56,12 @@ namespace KinectSaveModel.Tests
             MainWindow main = new MainWindow();
             readFile rf = new readFile(main.previewPath);
             calculatePreviewMovement cm = rf.averages;
-            List<Double[]> PreviewMovementList = new List<Double[]>();
-            Assert.AreEqual(cm.maxMinJointTotal[0][0], PreviewMovementList[0][0]);
-
+            double average = cm.getMovement();
+            cm.getReps(average, true);
+            List<Double[]> list = cm.maxMinJointTotal;
+            cm.getReps(average, false);
+            List<Double[]> list2 = cm.maxMinJointTotal;
+            Assert.AreEqual(list[3][0], list2[3][0]);
         }
         
     }

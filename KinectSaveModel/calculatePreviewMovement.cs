@@ -17,41 +17,34 @@ namespace KinectSaveModel
         {
             joints = jointsList;
             this.fileList = fileList;
-            getMovement();
+            double average = getMovement();
+            getReps(average, false);
         }
 
-        private void getMovement()
+        public double getMovement()
         {
             // To get the averagemovement of the wrists, first create two Arrays of double values
-            double[] averageWristRightXY = { 0, 0 };
-            double[] averageWristLeftXY = { 0, 0 };
+            double[] averageWristsYList = {0, 0};
             for (int i = 0; i < fileList.Count; i++)
             {
                 // Place the Listitem in a new List, get the X and Y values and add the values of the x and y positions
                 // to the Double list
                 List<Vector3D> vectorList = new List<Vector3D>();
                 vectorList = fileList[i].getVectorList();
-                averageWristRightXY[0] = averageWristRightXY[0] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].X;
-                averageWristRightXY[1] = averageWristRightXY[1] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
-                averageWristLeftXY[0] = averageWristLeftXY[0] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].X;
-                averageWristLeftXY[1] = averageWristLeftXY[1] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
+                averageWristsYList[0] = averageWristsYList[0] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
+                averageWristsYList[1] = averageWristsYList[1] + fileList[i].getVectorList()[Array.IndexOf(joints, "WristRight")].Y;
             }
             // Get the average position by dividing the coordinates by the number of items added
-            averageWristRightXY[0] = averageWristRightXY[0] / fileList.Count;
-            averageWristRightXY[1] = averageWristRightXY[1] / fileList.Count;
-            averageWristLeftXY[0] = averageWristLeftXY[0] / fileList.Count;
-            averageWristLeftXY[1] = averageWristLeftXY[1] / fileList.Count;
+            averageWristsYList[0] = averageWristsYList[0] / fileList.Count;
+            averageWristsYList[1] = averageWristsYList[1] / fileList.Count;
             // Get the average Y coordinates by summing up the left and right average y coordinates and deviding it by two
             // since there are two items summed up
-
-            double averageWristsY = ((averageWristRightXY[1] + averageWristLeftXY[1]) / 2);
-
-            getReps(averageWristsY);
+            double averageWristsY = ((averageWristsYList[0] + averageWristsYList[1]) / 2);
+            return averageWristsY;
         }
 
-        private void getReps(double averageWristsY)
+        public void getReps(double averageWristsY, bool workoutStarted)
         {
-            bool workoutStarted = false;
             int repNum = 0;
             bool averageYPos = false;
 
